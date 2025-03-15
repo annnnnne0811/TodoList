@@ -1,6 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
+
+    id("kotlin-kapt")
+
 }
 
 android {
@@ -67,4 +72,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.runtime.livedata)
+
+    val room_version = "2.6.1"
+
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+
+    //to use kotlin annotation processing took(kapt)
+    kapt("androidx.room:room-compiler:${room_version}")
+
+
+
 }

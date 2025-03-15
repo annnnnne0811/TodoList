@@ -4,29 +4,27 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.time.Instant
+import java.util.Date
 
 
 class TodoViewModel : ViewModel() {
 
-    //private so I cant modify in viewmodel
-    private var _todoList = MutableLiveData<List<Todo>>()
-    val todoList: LiveData<List<Todo>> = _todoList  //Exposes data to UI
+    val todoDao = MainApplication.toDoDatabase.getTodoDao()
 
-    fun getAllTodo()
-    {
-        _todoList.value = TodoManager.getAllTodo().reversed()
-    }
+
+    val todoList: LiveData<List<Todo>> = todoDao.getAllTodo()
+
 
     fun addTodo(title: String)
     {
-        TodoManager.addTodo(title)
-        getAllTodo()
+        todoDao.addTodo(Todo(title = title, made = Date.from(Instant.now())))
+
     }
 
-    fun deleteTodo(id: Int)
-    {
-        TodoManager.deleteTodo(id)
-        getAllTodo()
+    fun deleteTodo(id: Int){
+        todoDao.deleteTodo(id)
+
     }
 
 }
