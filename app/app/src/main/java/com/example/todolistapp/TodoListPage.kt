@@ -57,7 +57,7 @@ fun TodoListPage(viewModel: TodoViewModel){
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ){
             OutlinedTextField(value = inputText, onValueChange ={ inputText = it}) //Take user input

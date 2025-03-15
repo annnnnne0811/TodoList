@@ -14,7 +14,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Room.databaseBuilder(
+       toDoDatabase = Room.databaseBuilder(
             applicationContext,
             ToDoDatabase::class.java,
             ToDoDatabase.NAME
