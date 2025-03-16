@@ -5,13 +5,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,18 +43,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Delete
+import com.example.todolistapp.db.TodoDao_Impl
+import com.example.todolistapp.ui.appbars.TabItem
 import com.example.todolistapp.ui.theme.Pink80
 import com.example.todolistapp.ui.theme.Purple40
 import com.example.todolistapp.ui.theme.Purple80
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoListPage(viewModel: TodoViewModel) {
+fun TodoListPage(viewModel: TodoViewModel, navController: NavController) {
 
     val todoList by viewModel.todoList.observeAsState()
 
@@ -59,22 +63,7 @@ fun TodoListPage(viewModel: TodoViewModel) {
         mutableStateOf("")
     }//End
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("To-do List") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Purple40,
-                    titleContentColor = Color.White
-                )
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar()
-        }
-
-    )//End Scaffold
-    { paddingValues ->
+    Scaffold() { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -120,113 +109,182 @@ fun TodoListPage(viewModel: TodoViewModel) {
     }
 }//End todolistPage
 
-
-    //For the bottom Navigation bar
-    @Composable
-    fun BottomNavigationBar(){
-        NavigationBar(
-            containerColor = Purple40,
-            contentColor = Color.White
-        ){
-            //home
-            NavigationBarItem(
-                icon = { Icon(painterResource(id = R.drawable.baseline_home_24), contentDescription = "Home") },
-                label = { Text("Home") },
-                selected = true,
-                onClick = {}
-            )//End og home
-
-            //Calendar
-            NavigationBarItem(
-                icon = { Icon(painterResource(id = R.drawable.baseline_calendar_month_24), contentDescription = "Calendar") },
-                label = { Text("Calendar") },
-                selected = true,
-                onClick = {}
-            )//End of Calendar
+//for when the user enters a list
+@Composable
+fun TodoItem(item : Todo, onDelete:()->Unit){
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .padding(8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
 
 
-            NavigationBarItem(
-                icon = { Icon(painterResource(id = R.drawable.baseline_info_24), contentDescription = "info") },
-                label = { Text("Info") },
-                selected = true,
-                onClick = { }
-            )//End of home
-
-        }
-    }
-
-
-//Composable for the info screen
-//Info screen when user press the info on the navigation bar
-/*@Composable
-fun InfoScreen(navController: NavController){
-    Scaffold (
-        topBar = { ScreenTopBar("Info", navController) },
-    ){ innerPadding ->
-        Text(text = "This is the Info Screen",
-            modifier = Modifier
-                .background(Pink80) //Changes background color
-                .fillMaxSize()
-                .padding(innerPadding))
-    }
-}*/
-
-
-/*@Composable
-fun ScaffoldApp(){
-    val navController = rememberNavController() //This will handle screen for navigation
-    NavHost(
-        navController = navController,
-        startDestination = "TodoListPage" //the main screen{
-    ){
-        //add more composable here for the navigation
-        composable(route = "home"){ TodoListPage(viewModel = TodoViewModel(),navController)}
-        composable(route = "info"){ InfoScreen(navController) }
-    }
-}*/
-
-
-
-
-    @Composable
-    fun TodoItem(item : Todo, onDelete:()->Unit){
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(8.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-
-
-        )//End of row
+    )//End of row
+    {
+        Column(
+            modifier = Modifier.weight(1f)
+        )
         {
-            Column(
-                modifier = Modifier.weight(1f)
+            //adds date and time to the note added
+            Text(
+                text = SimpleDateFormat("HH:mm:aa, dd/mm", Locale.ENGLISH).format(item.made),
+                fontSize = 10.sp,
+                color = Purple80
             )
-            {
-                Text(
-                    text = SimpleDateFormat("HH:mm:aa, dd/mm", Locale.ENGLISH).format(item.made),
-                    fontSize = 10.sp,
-                    color = Purple80
-                )
 
-                Text(
-                    text = item.title,
-                    fontSize = 20.sp,
-                    color = Pink80
-                )
-            }//End of Column
+            Text(
+                text = item.title,
+                fontSize = 20.sp,
+                color = Pink80
+            )
+        }//End of Column
 
-            IconButton(onClick = onDelete)
-            {
-                Icon(painter = painterResource(id = R.drawable.baseline_delete_24),
-                    contentDescription = "Delete",
-                    tint = Color.White)
-            }//end of icon btn
+        //delete btn
+        IconButton(onClick = onDelete)
+        {
+            Icon(painter = painterResource(id = R.drawable.baseline_delete_24),
+                contentDescription = "Delete",
+                tint = Color.White)
+        }//end of icon btn
+    }
+
+}//End of todoitem
+
+
+//for the top header and the bottom navigator
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldApp(viewModel: TodoViewModel){
+
+    val navController = rememberNavController()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("To-do List App") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Purple40,
+                    titleContentColor = Color.White
+                )
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(navController)
         }
+    ){
+        innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = "home", //main page
+            modifier = Modifier.padding(innerPadding)
+        ){
+            composable(route = "home") { HomeScreen(viewModel = viewModel, navController) }
+            composable(route = "calendar") { CalendarScreen() }
+            composable(route = "info") { InfoScreen() }
+        }
+    }
+}
 
-    }//End of todoitem
+//Composables for the screens
+
+//home aka main
+@Composable
+fun HomeScreen(viewModel: TodoViewModel, navController: NavController) {
+    TodoListPage(viewModel, navController)
+}
+
+
+//Calendar screen
+@Composable
+fun CalendarScreen(modifier: Modifier = Modifier) {
+    Text(
+        modifier = modifier.fillMaxSize(),
+        text = "put calendar api"
+    )
+}
+
+
+//info screen
+@Composable
+fun InfoScreen(modifier: Modifier = Modifier) {
+    Text(
+        modifier = modifier.fillMaxSize(),
+        text = "This is the Info Screen"
+    )
+}
+
+
+
+
+//for the bottom navigation bar
+@Composable
+fun BottomNavigationBar(navController: NavController) {
+    val backStackEntry = navController.currentBackStackEntryAsState()
+
+    val tabs = listOf(
+        TabItem("Home", Icons.Filled.Home, "home"),
+        TabItem("Calendar", Icons.Filled.DateRange, "calendar"),
+        TabItem("Info", Icons.Filled.Info, "info")
+    )
+
+    NavigationBar (
+        containerColor = Purple40
+    ){
+        tabs.forEach { tab -> // used for looping in the nav bar
+
+            // checks if current tab is the selected one
+            val selected = tab.route == backStackEntry.value?.destination?.route
+            NavigationBarItem(
+                selected = selected,
+                onClick = {
+                    navController.navigate(tab.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                label = { Text(tab.label) },
+                icon = {
+                    Icon(
+                        imageVector = tab.icon,
+                        contentDescription = tab.label
+                    )
+                }
+            )
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
