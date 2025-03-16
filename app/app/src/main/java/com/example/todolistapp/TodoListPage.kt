@@ -116,7 +116,7 @@ fun TodoItem(item : Todo, onDelete:()->Unit){
         modifier = Modifier.fillMaxWidth()
             .padding(8.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primary)
+            .background(Color(0xFF6495ED))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
 
@@ -161,6 +161,7 @@ fun ScaffoldApp(viewModel: TodoViewModel){
     val navController = rememberNavController()
 
     Scaffold(
+        containerColor = Color(0xFFE3F2FD),
         topBar = {
             TopAppBar(
                 title = { Text("To-do List App") },
@@ -211,7 +212,7 @@ fun CalendarScreen(modifier: Modifier = Modifier) {
 fun InfoScreen(modifier: Modifier = Modifier) {
     Text(
         modifier = modifier.fillMaxSize(),
-        text = "This is the Info Screen"
+        text = "Free topic assignment: A to do list app with a google calendar api due 16th March"
     )
 }
 

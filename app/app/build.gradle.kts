@@ -104,7 +104,17 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation (libs.androidx.material3.v120)
-    
+
+
+
+    //for the api calender
+   // implementation(libs.google.api.client.android)
+  //  implementation(libs.google.oauth.client.jetty)
+  //  implementation(libs.google.api.services.calendar)
+
+   // implementation (libs.androidx.lifecycle.viewmodel.compose)
+
+
 
 
 
