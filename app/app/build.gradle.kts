@@ -55,6 +55,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.material3)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -64,6 +65,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.runtime.android)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,6 +84,22 @@ dependencies {
 
     //to use kotlin annotation processing took(kapt)
     kapt("androidx.room:room-compiler:${room_version}")
+
+
+    //lifecycle & viewmodel
+    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+
+    //navigation
+    implementation(libs.androidx.navigation.compose.v276)
+    implementation(libs.androidx.navigation.compose.v253)
+
+
+
+
+    //hilt
+    implementation(libs.androidx.hilt.navigation.compose)
 
 
 
